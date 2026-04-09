@@ -25,7 +25,7 @@ public class AudioDispatcher
     private int mediaState;
     private AudioAsset owner;
 
-    public AudioDispatcher(AssetFileDescriptor assetFileDescriptor, float volume) throws Exception {
+    public AudioDispatcher(AssetFileDescriptor assetFileDescriptor, float volumeLeft, float volumeRight) throws Exception {
         mediaState = INVALID;
 
         mediaPlayer = new MediaPlayer();
@@ -43,7 +43,7 @@ public class AudioDispatcher
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build()
         );
-        mediaPlayer.setVolume(volume, volume);
+        mediaPlayer.setVolume(volumeLeft, volumeRight);
         mediaPlayer.prepare();
     }
 
@@ -86,8 +86,8 @@ public class AudioDispatcher
         }
     }
 
-    public void setVolume(float volume) throws Exception {
-        mediaPlayer.setVolume(volume, volume);
+    public void setVolume(float volumeLeft, float volumeRight) throws Exception {
+        mediaPlayer.setVolume(volumeLeft, volumeRight);
     }
 
     public void loop() throws Exception {

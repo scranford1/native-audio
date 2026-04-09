@@ -7,6 +7,7 @@ public class Constant {
     public static final String ERROR_AUDIO_EXISTS = "Audio Asset already exists";
     public static final String ERROR_ASSET_PATH_MISSING = "Asset Path is missing";
     public static final String ERROR_ASSET_NOT_LOADED = "Asset is not loaded";
+    public static final String ERROR_INVALID_VOLUME = "Audio volume invalid";
 
     public static final String ASSET_ID = "assetId";
     public static final String ASSET_PATH = "assetPath";

@@ -9,7 +9,7 @@ export interface NativeAudio {
   loop(options: { assetId: string }): Promise<void>;
   stop(options: { assetId: string }): Promise<void>;
   unload(options: { assetId: string }): Promise<void>;
-  setVolume(options: { assetId: string; volume: number }): Promise<void>;
+  setVolume(options: { assetId: string; volume: number | number[] }): Promise<void>;
   getCurrentTime(options: { assetId: string }): Promise<{ currentTime: number }>;
   getDuration(options: { assetId: string }): Promise<{ duration: number }>;
   isPlaying(options: { assetId: string }): Promise<{ isPlaying: boolean }>;
@@ -37,7 +37,7 @@ export interface ConfigureOptions {
 export interface PreloadOptions {
   assetPath: string;
   assetId: string;
-  volume?: number;
+  volume?: number | number[];
   audioChannelNum?: number;
   isUrl?: boolean;
 }

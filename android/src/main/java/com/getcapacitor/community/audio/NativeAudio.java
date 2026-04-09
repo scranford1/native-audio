@@ -8,6 +8,7 @@ import static com.getcapacitor.community.audio.Constant.ERROR_ASSET_PATH_MISSING
 import static com.getcapacitor.community.audio.Constant.ERROR_AUDIO_ASSET_MISSING;
 import static com.getcapacitor.community.audio.Constant.ERROR_AUDIO_EXISTS;
 import static com.getcapacitor.community.audio.Constant.ERROR_AUDIO_ID_MISSING;
+import static com.getcapacitor.community.audio.Constant.ERROR_INVALID_VOLUME;
 import static com.getcapacitor.community.audio.Constant.LOOP;
 import static com.getcapacitor.community.audio.Constant.OPT_FADE_MUSIC;
 import static com.getcapacitor.community.audio.Constant.OPT_FOCUS_AUDIO;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.json.JSONArray;
 
 @CapacitorPlugin(
     permissions = {
@@ -296,12 +298,26 @@ public class NativeAudio extends Plugin implements AudioManager.OnAudioFocusChan
             initSoundPool();
 
             String audioId = call.getString(ASSET_ID);
-            float volume = call.getFloat(VOLUME);
+            Object volume = call.getData().get(VOLUME);
+
+            float volumeLeft = 0.0f;
+            float volumeRight = 0.0f;
+
+            if (volume instanceof Number) {
+                volumeLeft = ((Number) volume).floatValue();
+                volumeRight = ((Number) volume).floatValue();
+            } else if (volume instanceof JSONArray) {
+                JSONArray volumes = (JSONArray) volume;
+                volumeLeft = (float) volumes.getDouble(0);
+                volumeRight = (float) volumes.getDouble(1);
+            } else {
+                call.reject(ERROR_INVALID_VOLUME);
+            }
 
             if (audioAssetList.containsKey(audioId)) {
                 AudioAsset asset = audioAssetList.get(audioId);
                 if (asset != null) {
-                    asset.setVolume(volume);
+                    asset.setVolume(volumeLeft, volumeRight);
                     call.resolve();
                 }
             } else {
@@ -344,15 +360,25 @@ public class NativeAudio extends Plugin implements AudioManager.OnAudioFocusChan
     }
 
     private void preloadAsset(PluginCall call) {
-        double volume = call.getDouble(VOLUME, 1.0);
-        int audioChannelNum = call.getInt(AUDIO_CHANNEL_NUM, 1);
-
         try {
             initSoundPool();
 
+            int audioChannelNum = call.getInt(AUDIO_CHANNEL_NUM, 1);
             String audioId = call.getString(ASSET_ID);
-
             boolean isUrl = call.getBoolean("isUrl", false);
+            Object volume = call.getData().opt(VOLUME);
+
+            float volumeLeft = 1.0f;
+            float volumeRight = 1.0f;
+
+            if (volume instanceof Number) {
+                volumeLeft = ((Number) volume).floatValue();
+                volumeRight = ((Number) volume).floatValue();
+            } else if (volume instanceof JSONArray) {
+                JSONArray volumes = (JSONArray) volume;
+                volumeLeft = (float) volumes.getDouble(0);
+                volumeRight = (float) volumes.getDouble(1);
+            }
 
             if (!isStringValid(audioId)) {
                 call.reject(ERROR_AUDIO_ID_MISSING + " - " + audioId);
@@ -385,7 +411,7 @@ public class NativeAudio extends Plugin implements AudioManager.OnAudioFocusChan
                     }
                 }
 
-                AudioAsset asset = new AudioAsset(this, audioId, assetFileDescriptor, audioChannelNum, (float) volume);
+                AudioAsset asset = new AudioAsset(this, audioId, assetFileDescriptor, audioChannelNum, volumeLeft, volumeRight);
                 audioAssetList.put(audioId, asset);
 
                 JSObject status = new JSObject();

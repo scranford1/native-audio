@@ -313,12 +313,12 @@ unload(options: { assetId: string; }) => Promise<void>
 ### setVolume(...)
 
 ```typescript
-setVolume(options: { assetId: string; volume: number; }) => Promise<void>
+setVolume(options: { assetId: string; volume: number | number[]; }) => Promise<void>
 ```
 
-| Param         | Type                                              |
-| ------------- | ------------------------------------------------- |
-| **`options`** | <code>{ assetId: string; volume: number; }</code> |
+| Param         | Type                                                          |
+| ------------- | ------------------------------------------------------------- |
+| **`options`** | <code>{ assetId: string; volume: number \| number[]; }</code> |
 
 --------------------
 
@@ -401,13 +401,13 @@ Listen for asset completed playing event
 
 #### PreloadOptions
 
-| Prop                  | Type                 |
-| --------------------- | -------------------- |
-| **`assetPath`**       | <code>string</code>  |
-| **`assetId`**         | <code>string</code>  |
-| **`volume`**          | <code>number</code>  |
-| **`audioChannelNum`** | <code>number</code>  |
-| **`isUrl`**           | <code>boolean</code> |
+| Prop                  | Type                            |
+| --------------------- | ------------------------------- |
+| **`assetPath`**       | <code>string</code>             |
+| **`assetId`**         | <code>string</code>             |
+| **`volume`**          | <code>number \| number[]</code> |
+| **`audioChannelNum`** | <code>number</code>             |
+| **`isUrl`**           | <code>boolean</code>            |
 
 
 #### PluginListenerHandle

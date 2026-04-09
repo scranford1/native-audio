@@ -55,6 +55,9 @@ export class NativeAudioWeb extends WebPlugin implements NativeAudio {
     audio.loop = false;
     audio.preload = 'auto';
     if (options.volume) {
+      if (typeof options?.volume !== 'number') {
+        throw 'no valid volume provided';
+      }
       audio.volume = options.volume;
     }
     NativeAudioWeb.AUDIO_ASSET_BY_ASSET_ID.set(options.assetId, new AudioAsset(audio));
@@ -87,9 +90,9 @@ export class NativeAudioWeb extends WebPlugin implements NativeAudio {
     NativeAudioWeb.AUDIO_ASSET_BY_ASSET_ID.delete(options.assetId);
   }
 
-  async setVolume(options: { assetId: string; volume: number }): Promise<void> {
+  async setVolume(options: { assetId: string; volume: number | number[] }): Promise<void> {
     if (typeof options?.volume !== 'number') {
-      throw 'no volume provided';
+      throw 'no valid volume provided';
     }
 
     const audio: HTMLAudioElement = this.getAudioAsset(options.assetId).audio;
